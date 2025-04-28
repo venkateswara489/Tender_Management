@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Tender Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script>
+    function validateForm() {
+        var name = document.getElementById("username").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirm_password").value;
+        var company = document.getElementById("company").value.trim();
+        var contact = document.getElementById("contact").value.trim();
+
+        if (!/^[a-zA-Z ]+$/.test(name)) {
+            Swal.fire({
+                title: 'Invalid Name',
+                text: 'Name should contain only letters and spaces',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            Swal.fire({
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        if (password.length < 8 || !/[%$@*#]/.test(password) || !/[a-z]/.test(password)) {
+            Swal.fire({
+                title: 'Weak Password',
+                text: 'Password must be at least 8 characters long and contain at least one special character (%$@*#) and one lowercase letter',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        if (password !== confirmPassword) {
+            Swal.fire({
+                title: 'Password Mismatch',
+                text: 'Passwords do not match',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        if (company.length < 2) {
+            Swal.fire({
+                title: 'Company Required',
+                text: 'Please enter a valid company name',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        if (!/^\d{10}$/.test(contact)) {
+            Swal.fire({
+                title: 'Invalid Contact',
+                text: 'Contact should be 10 digits',
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+    // Check for messages in URL parameters
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+
+        if (error) {
+            let title = 'Error';
+            let text = 'Registration failed';
+
+            switch(error) {
+                case 'email_exists':
+                    text = 'This email is already registered!';
+                    break;
+                case 'name_invalid':
+                    text = 'Invalid name format!';
+                    break;
+                case 'email_invalid':
+                    text = 'Invalid email format!';
+                    break;
+                case 'password_weak':
+                    text = 'Password is too weak!';
+                    break;
+                case 'usertype_invalid':
+                    text = 'Invalid user type!';
+                    break;
+                case 'company_required':
+                    text = 'Company name is required!';
+                    break;
+                case 'contact_invalid':
+                    text = 'Invalid contact number!';
+                    break;
+                case 'failed':
+                    text = 'Registration failed. Please try again!';
+                    break;
+            }
+
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+        }
+    }
+</script>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4">Register</h2>
+                        <form method="POST" action="register_process.php" onsubmit="return check();">
+                            <div class="mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="username" name="username" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="password" name="password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirm_password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">User Type</label>
+                                <select class="form-select" id="userType" name="userType" required>
+                                    <option value="bidder">Bidder</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" id="company" name="company" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" id="contact" name="contact" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Register</button>
+                        </form>                        
+                        <div class="text-center mt-3">
+                            <a href="login.html">Already have an account? Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
